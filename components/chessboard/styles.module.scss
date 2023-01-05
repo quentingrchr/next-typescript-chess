@@ -1,0 +1,42 @@
+@import '@styles/theme.scss';
+
+// Your style here
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+// chessboard grid
+.board {
+  display: grid;
+  grid: repeat(8, 8rem) / repeat(8, 8rem);
+}
+
+/* 8x8 board */
+
+.cell {
+  height: 8rem;
+  width: 8rem;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid #000;
+  background-color: var(--color-piece-white);
+  font-size: 1rem;
+  &.black {
+    background-color: var(--color-piece-black);
+    color: #fff;
+  }
+
+  .coord {
+    font-size: 1rem;
+    position: absolute;
+    left: 1rem;
+    top: 1rem;
+    color: red;
+  }
+}

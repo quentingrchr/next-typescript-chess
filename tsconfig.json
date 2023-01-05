@@ -34,7 +34,8 @@
       "@recoil": ["recoil"],
       "@config/*": ["config/*"],
       "@context/": ["context/"],
-      "@context/*": ["context/*"]
+      "@context/*": ["context/*"],
+      "@models/*": ["models/*"]
     },
     "incremental": true
   },
