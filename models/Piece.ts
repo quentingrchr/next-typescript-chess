@@ -47,6 +47,9 @@ export interface IPiece {
     board: IBoard,
     position: PositionType
   ) => PositionType[]
+
+  positionCollidesWithAlly: (board: IBoard, position: PositionType) => boolean
+  positionCollidesWithEnemy: (board: IBoard, position: PositionType) => boolean
 }
 
 export interface ISpecificPiece extends IPiece {
@@ -282,5 +285,29 @@ export abstract class Piece implements IPiece {
       return !forbidden
     })
     return possibleMoves
+  }
+
+  /**
+   * Check if the position collides with an ally piece
+   * @param {IBoard} board
+   * @param {MovePositionType} move
+   * @returns {boolean}
+   */
+  positionCollidesWithAlly(board: IBoard, position: PositionType): boolean {
+    const hasPiece = board.getSideOnSpot(position)
+    if (!hasPiece) return false
+    return board.getSideOnSpot(position) === this.getPieceSide()
+  }
+
+  /**
+   * Check if the position collides with an enemy piece
+   * @param {IBoard} board
+   * @param {MovePositionType} move
+   * @returns {boolean}
+   */
+  positionCollidesWithEnemy(board: IBoard, position: PositionType): boolean {
+    const hasPiece = board.getSideOnSpot(position)
+    if (!hasPiece) return false
+    return board.getSideOnSpot(position) !== this.getPieceSide()
   }
 }
