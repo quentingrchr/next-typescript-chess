@@ -26,6 +26,10 @@ export interface IPiece {
   getIsKilled: () => boolean
   setIsKilled: (isKilled: boolean) => void
 
+  _hasNotMoved: boolean
+  getHasNotMoved: () => boolean
+  setHasNotMoved: (hasNotMoved: boolean) => void
+
   moveIsForbidden: (board: IBoard, move: MovePositionType) => boolean
   newSpotIsOccupiedBySameSide: (
     board: IBoard,
@@ -57,11 +61,13 @@ export abstract class Piece implements IPiece {
   _side: ColorType
   _name: PieceNameType
   _isKilled: boolean
+  _hasNotMoved: boolean
   constructor(type: PieceType, player: ColorType) {
     this._type = type
     this._side = player
     this._name = `${this._side}_${this._type}`
     this._isKilled = false
+    this._hasNotMoved = true
   }
 
   /**
@@ -130,6 +136,22 @@ export abstract class Piece implements IPiece {
    */
   setIsKilled(isKilled: boolean): void {
     this._isKilled = isKilled
+  }
+
+  /**
+   * Get the piece hasNotMoved status
+   */
+  getHasNotMoved(): boolean {
+    return this._hasNotMoved
+  }
+
+  /**
+   * Set the piece hasNotMoved status
+   * @param {boolean} hasNotMoved
+   *
+   */
+  setHasNotMoved(hasNotMoved: boolean): void {
+    this._hasNotMoved = hasNotMoved
   }
 
   /**
@@ -232,6 +254,7 @@ export abstract class Piece implements IPiece {
       (position) => position[0] === move.to[0] && position[1] === move.to[1]
     )
     if (!isAPossiblePosition) return false
+
     return true
   }
 

@@ -20,6 +20,7 @@ export interface IBoard {
   createSpots: () => void
   getSpots: () => Spots
   getSpot: (position: PositionType) => Spot
+  getSideOnSpot: (position: PositionType) => ColorType | false
   createPiece: (piece: ISpecificPiece, position: PositionType) => void
   removePiece: (position: PositionType) => void
   movePiece: (from: PositionType, to: PositionType) => void
@@ -74,6 +75,18 @@ export class Board implements IBoard {
   getSpot(position: PositionType): Spot {
     const [x, y] = position
     return this._spots[y][x]
+  }
+
+  /**
+   * Get the side on a specific spot
+   * @param {PositionType} position
+   * @returns {ColorType | false}
+   * @example
+   */
+  getSideOnSpot(position: PositionType): ColorType | false {
+    const spot = this.getSpot(position)
+    if (!spot) return false
+    return spot.getPieceSide()
   }
 
   /**
@@ -162,13 +175,17 @@ export class Board implements IBoard {
   movePiece(from: PositionType, to: PositionType) {
     const [fromX, fromY] = from
     const [toX, toY] = to
-    console.log('from', this._spots[fromY][fromX])
-    console.log('to', this._spots[toY][toX])
+    const pieceToMove = this._spots[fromY][fromX]
+    if (!pieceToMove) return
+
     if (this._spots[toY][toX] !== null) {
       this.removePiece([toY, toX])
     }
-    this._spots[toY][toX] = this._spots[fromY][fromX]
+    this._spots[toY][toX] = pieceToMove
     this._spots[fromY][fromX] = null
+    if (pieceToMove.getHasNotMoved()) {
+      pieceToMove.setHasNotMoved(false)
+    }
   }
 
   /**
@@ -181,8 +198,15 @@ export class Board implements IBoard {
     const [fromX, fromY] = from
     const piece = this._spots[fromY][fromX]
     if (!piece) return false
-    if (piece._side !== this._playerTurn) return false
+    const pieceSide = piece.getPieceSide()
+    if (pieceSide !== this._playerTurn) return false
     if (!piece.canMove(this, { from, to })) return false
+    const destinationPiece = this.getPiece(to)
+    if (destinationPiece && pieceSide !== destinationPiece.getPieceSide()) {
+      destinationPiece.setIsKilled(true)
+      this.removePiece(to)
+    }
+
     this.movePiece(from, to)
     this.endTurn()
     return true

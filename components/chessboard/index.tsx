@@ -99,7 +99,7 @@ export default function Chessboard(props: IProps) {
               })}
               onClick={() => handleClick([x, y])}
             >
-              {spot !== null && (
+              {spot !== null && !spot.getIsKilled() && (
                 <img
                   src={`/pieces/${spot?.getImageName()}.svg`}
                   alt={`${spot?.getImageName()}`}
