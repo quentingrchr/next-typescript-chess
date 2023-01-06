@@ -113,6 +113,8 @@ export class Board implements IBoard {
     this.createPiece(new Pawn(ColorType.WHITE), [5, 1])
     this.createPiece(new Pawn(ColorType.WHITE), [6, 1])
     this.createPiece(new Pawn(ColorType.WHITE), [7, 1])
+    this.createPiece(new Rook(ColorType.WHITE), [0, 0])
+    this.createPiece(new Rook(ColorType.WHITE), [7, 0])
 
     /* Black Pieces */
     this.createPiece(new Pawn(ColorType.BLACK), [0, 6])
@@ -123,6 +125,8 @@ export class Board implements IBoard {
     this.createPiece(new Pawn(ColorType.BLACK), [5, 6])
     this.createPiece(new Pawn(ColorType.BLACK), [6, 6])
     this.createPiece(new Pawn(ColorType.WHITE), [7, 6])
+    this.createPiece(new Rook(ColorType.BLACK), [0, 7])
+    this.createPiece(new Rook(ColorType.BLACK), [7, 7])
   }
 
   /**
