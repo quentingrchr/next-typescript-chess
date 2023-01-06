@@ -11,25 +11,35 @@ declare global {
 }
 
 export interface IBoard {
-  spots: Spots
+  _playerTurn: ColorType
+  _turnNb: number
+  _spots: Spots
   _row: number
   _col: number
   setBoard: () => void
   createSpots: () => void
   getSpots: () => Spots
+  getSpot: (position: PositionType) => Spot
   createPiece: (piece: ISpecificPiece, position: PositionType) => void
   removePiece: (position: PositionType) => void
   movePiece: (from: PositionType, to: PositionType) => void
+  getPlayerTurn: () => ColorType
+  getTurnNb: () => number
   getPiece: (position: PositionType) => Spot
   getBounds: () => [number, number]
+  endTurn: () => void
+  playTurn: (from: PositionType, to: PositionType) => boolean
 }
 
 export class Board implements IBoard {
-  spots: Spots
+  _playerTurn: ColorType = ColorType.WHITE
+  _turnNb = 0
+  _spots: Spots
   _row: number
   _col: number
   constructor() {
-    this.spots = [[]]
+    this._playerTurn = ColorType.WHITE
+    this._spots = [[]]
     this._row = 8
     this._col = 8
     this.init()
@@ -41,24 +51,46 @@ export class Board implements IBoard {
 
   createSpots() {
     for (let i = 0; i < this._row; i++) {
-      this.spots[i] = []
+      this._spots[i] = []
       for (let j = 0; j < this._col; j++) {
-        this.spots[i][j] = null
+        this._spots[i][j] = null
       }
     }
   }
 
-  getSpots() {
-    return this.spots
+  /**
+    Get the board spots
+    @returns {Spots}
+   */
+  getSpots(): Spots {
+    return this._spots
   }
 
+  /**
+   * Get a specific spot
+   * @param {PositionType} position
+   * @returns {Spot}
+   */
+  getSpot(position: PositionType): Spot {
+    const [x, y] = position
+    return this._spots[y][x]
+  }
+
+  /**
+   * Create a specific piece and place it on the board
+   * @param {ISpecificPiece} piece
+   * @param {PositionType} position
+   */
   createPiece(piece: ISpecificPiece, position: PositionType) {
     const [col, row] = position
-    this.spots[row][col] = piece
+    this._spots[row][col] = piece
   }
+
+  /**
+   * Set initial board state, with pieces in their starting positions
+   */
   setBoard() {
     this.createSpots()
-
     /* White Pieces */
     this.createPiece(new Pawn(ColorType.WHITE), [0, 1])
     this.createPiece(new Pawn(ColorType.WHITE), [1, 1])
@@ -80,29 +112,90 @@ export class Board implements IBoard {
     this.createPiece(new Pawn(ColorType.WHITE), [7, 6])
   }
 
+  /**
+   * Get the bounds of the board (max row, max columns)
+   * @returns {[number, number]} [number, number]
+   */
   getBounds(): [number, number] {
     return [this._row, this._col]
   }
 
+  /**
+   * Get a piece of the board
+   * @param {[PositionType]} position PositionType Array
+   * @returns {Spot} Spot
+   */
   getPiece(position: PositionType): Spot {
-    const [row, col] = position
-    return this.getSpots()[row][col] ? this.getSpots()[row][col] : null
+    const [x, y] = position
+    return this.getSpots()[y][x] ? this.getSpots()[y][x] : null
   }
 
+  /**
+   * Get the color of the player whose turn it is
+   */
+  getPlayerTurn(): ColorType {
+    return this._playerTurn
+  }
+
+  /**
+   * Get the turn number
+   * @returns {number} number
+   */
+  getTurnNb(): number {
+    return this._turnNb
+  }
+
+  /**
+   * Remove a piece of the board
+   * @param {[PositionType]} position PositionType Array
+   */
   removePiece(position: PositionType) {
     const [x, y] = position
-    this.spots[y][x] = null
+    this._spots[y][x] = null
   }
 
+  /**
+   * Move a piece of the board from one position to another
+   * @param {[PositionType]} from PositionType Array
+   * @param {[PositionType]} to PositionType Array
+   */
   movePiece(from: PositionType, to: PositionType) {
     const [fromX, fromY] = from
     const [toX, toY] = to
-    console.log('from', this.spots[fromY][fromX])
-    console.log('to', this.spots[toY][toX])
-    if (this.spots[toY][toX] !== null) {
+    console.log('from', this._spots[fromY][fromX])
+    console.log('to', this._spots[toY][toX])
+    if (this._spots[toY][toX] !== null) {
       this.removePiece([toY, toX])
     }
-    this.spots[toY][toX] = this.spots[fromY][fromX]
-    this.spots[fromY][fromX] = null
+    this._spots[toY][toX] = this._spots[fromY][fromX]
+    this._spots[fromY][fromX] = null
+  }
+
+  /**
+   * Play a turn
+   * @param {[PositionType]} from PositionType Array
+   * @param {[PositionType]} to PositionType Array
+   * @returns {boolean} true if the turn is valid, false otherwise
+   */
+  playTurn(from: PositionType, to: PositionType): boolean {
+    const [fromX, fromY] = from
+    const piece = this._spots[fromY][fromX]
+    if (!piece) return false
+    if (piece._side !== this._playerTurn) return false
+    if (!piece.canMove(this, { from, to })) return false
+    this.movePiece(from, to)
+    this.endTurn()
+    return true
+  }
+
+  /**
+   * End the current turn
+   * @returns {ColorType} Color of the next turn
+   */
+  endTurn(): ColorType {
+    this._playerTurn =
+      this._playerTurn === ColorType.WHITE ? ColorType.BLACK : ColorType.WHITE
+    this._turnNb++
+    return this._playerTurn
   }
 }

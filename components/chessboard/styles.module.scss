@@ -4,8 +4,49 @@
 
 .container {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
+  color: var(--color-piece-black);
+  h1 {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5rem;
+  }
+}
+
+.infos {
+  padding: 2rem;
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  gap: 1rem;
+  width: 100%;
+  font-size: 2rem;
+  &.black {
+    background-color: var(--color-piece-black);
+    color: var(--color-piece-white);
+  }
+  &.white {
+    background-color: var(--color-piece-white);
+    color: var(--color-piece-black);
+  }
+}
+
+.number {
+  position: absolute;
+  right: 1rem;
+  top: 1rem;
+}
+
+.indications {
+  font-size: 3rem;
+  font-style: italic;
+  font-weight: 700;
 }
 
 // chessboard grid
@@ -29,14 +70,22 @@
   font-size: 1rem;
   &.black {
     background-color: var(--color-piece-black);
-    color: #fff;
+  }
+  &.selected {
+    background-color: var(--color-primary);
+  }
+
+  &.possible {
+    background-color: red;
   }
 
   .coord {
-    font-size: 1rem;
+    font-size: 0.8rem;
     position: absolute;
-    left: 1rem;
-    top: 1rem;
-    color: red;
+    left: 0.5rem;
+    top: 0.5rem;
+    /* invert color */
+    mix-blend-mode: difference;
+    color: var(--color-piece-white);
   }
 }
