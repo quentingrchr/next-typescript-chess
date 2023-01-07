@@ -4,7 +4,7 @@ import { IBoard } from '../Board'
 
 export class Pawn extends Piece implements ISpecificPiece {
   constructor(player: ColorType) {
-    super(PieceType.BISHOP, player)
+    super(PieceType.PAWN, player)
   }
 
   getPossibleSpecifPieceMovesFromPosition(
@@ -13,8 +13,6 @@ export class Pawn extends Piece implements ISpecificPiece {
   ): PositionType[] {
     const [x, y] = position
     const moves: PositionType[] = []
-    const turnNb = board.getTurnNb()
-    console.log('this.getPieceSide()', this.getPieceSide())
     if (this.getPieceSide() === ColorType.WHITE) {
       if (board.getSideOnSpot([x, y + 1]) !== ColorType.BLACK) {
         moves.push([x, y + 1] as PositionType)
