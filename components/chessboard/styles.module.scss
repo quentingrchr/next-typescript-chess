@@ -76,7 +76,18 @@
   }
 
   &.possible {
-    background-color: red;
+    &::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: var(--color-primary);
+      opacity: 0.5;
+      border-radius: 50%;
+      height: 2rem;
+      width: 2rem;
+    }
   }
 
   .coord {
